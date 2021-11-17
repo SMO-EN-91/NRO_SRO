@@ -1,0 +1,192 @@
+<html>
+<head>
+<meta charset="utf-16" />
+<title>Carte localisation NRO et SRO</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css" rel="stylesheet" />
+<style>
+	body { margin: 0; padding: 0; }
+	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+
+	.legend {
+background-color: #fff;
+border-radius: 3px;
+bottom: 30px;
+box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+padding: 5px;
+position: absolute;
+right: 10px;
+z-index: 10;
+}
+ 
+.legend h4 {
+margin: 0 0 10px;
+}
+ 
+.legend div span {
+border-radius: 50%;
+display: inline-block;
+height: 10px;
+margin-right: 5px;
+width: 10px;
+}
+</style>
+</head>
+<body>
+<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.min.js"></script>
+<link
+    rel="stylesheet"
+    href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.4.2/mapbox-gl-geocoder.css"
+    type="text/css"
+/>
+<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+
+<div id="map"></div>
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoiYmFsbGVyZWF1IiwiYSI6ImNrOGZ5Z3M2MzA0dHAzZXBrcDQwbzN5YzIifQ.UpKvOA9C3E4M9bOoG7r1yg';
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/ballereau/ckvtngmi726mq16quf0gyl21l',
+        center: [2.306518, 48.523618],
+        zoom: 9.5
+    });
+    map.addControl(
+        new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+   // limit results to France
+    countries: 'fr',
+            mapboxgl: mapboxgl
+        })
+    );
+    
+map.on('load', function() {
+// Add a source for the SRO points.
+map.addSource('sro', {
+'type': 'geojson',
+'data':
+'ballereau.anavvdax'
+});
+});
+ 
+ 
+// When a click event occurs on a feature in the states layer, open a popup at the
+// location of the click, with description HTML from its properties.
+map.on('click', 'sro', function(e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML('<strong>SRO : </strong>' + e.features[0].properties.st_nom +'</p>' + e.features[0].properties.Adresse +'</p> '+ e.features[0].properties.CP +' '+ e.features[0].properties.VILLE)
+.addTo(map);
+});
+ 
+// Change the cursor to a pointer when the mouse is over the SRO layer.
+map.on('mouseenter', 'sro', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'sro', function() {
+map.getCanvas().style.cursor = '';
+});
+
+
+map.on('load', function() {
+// Add a source for the NRO points.
+map.addSource('nro', {
+'type': 'geojson',
+'data':
+'ballereau.1ne863tv'
+});
+});
+ 
+ 
+// When a click event occurs on a feature in the states layer, open a popup at the
+// location of the click, with description HTML from its properties.
+map.on('click', 'nro', function(e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML('<strong>NRO : </strong>' + e.features[0].properties.st_nom +'</p>' + e.features[0].properties.Voie +'</p> '+ e.features[0].properties.Commune)
+.addTo(map);
+});
+ 
+// Change the cursor to a pointer when the mouse is over the SRO layer.
+map.on('mouseenter', 'nro', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'nro', function() {
+map.getCanvas().style.cursor = '';
+});
+
+
+map.on('load', function() {
+// Add a source for the ZASRO polygons.
+map.addSource('zasro', {
+'type': 'geojson',
+'data':
+'ballereau.9btvn03n'
+});
+
+ 
+ 
+// When a click event occurs on a feature in the states layer, open a popup at the
+// location of the click, with description HTML from its properties.
+map.on('click', 'zasro', function(e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML('<strong>ZASRO</strong>' +'</p>'+ e.features[0].properties.zs_r3_code)
+.addTo(map);
+});
+ 
+// Change the cursor to a pointer when the mouse is over the JALON layer.
+map.on('mouseenter', 'zasro', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'zasro', function() {
+map.getCanvas().style.cursor = '';
+});
+});
+
+map.on('load', function() {
+// Add a source for the JALON polygons.
+map.addSource('zanro', {
+'type': 'geojson',
+'data':
+'ballereau.by2m37ir'
+});
+
+ 
+// When a click event occurs on a feature in the states layer, open a popup at the
+// location of the click, with description HTML from its properties.
+map.on('click', 'zanro', function(e) {
+new mapboxgl.Popup()
+.setLngLat(e.lngLat)
+.setHTML('<strong>ZANRO</strong>' +'</p>'+ e.features[0].properties.zn_r2_code)
+.addTo(map);
+});
+ 
+// Change the cursor to a pointer when the mouse is over the JALON layer.
+map.on('mouseenter', 'zanro', function() {
+map.getCanvas().style.cursor = 'pointer';
+});
+ 
+// Change it back to a pointer when it leaves.
+map.on('mouseleave', 'zanro', function() {
+map.getCanvas().style.cursor = '';
+});
+});
+
+</script>
+	
+
+<div id="sro" class="legend">
+Points techniques
+<div><span style="background-color: #ff0000"></span>NRO / SRO</div>
+<small>Source: <a href="http://essonnenumerique.com/"target="_blank">Essonne Numérique</a></small>
+</div>
